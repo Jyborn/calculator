@@ -89,9 +89,8 @@ class Calculator {
         Stack<String> output = new Stack<>();
         Stack<String> stack = new Stack<>();
 
-        int i = 0;
         while (tokens.size() > 0) {
-            String currToken = tokens.get(i);
+            String currToken = tokens.get(0);
             String topOperator = "";
             if(!stack.empty()) {topOperator = stack.peek();}
             if (isNumber(currToken)) {
@@ -101,8 +100,7 @@ class Calculator {
                 while (!topOperator.equals("(") && !stack.empty() && getPrecedence(topOperator) > getPrecedence(currToken)
                         || !topOperator.equals("(") && !stack.empty() && getPrecedence(topOperator) == getPrecedence(currToken) && getAssociativity(topOperator) == Assoc.LEFT) {
                     output.push(stack.pop()); //token is a operator add other operators from operatorstack to outputstack
-                    if (!stack.empty()) {topOperator = stack.peek();}
-                    else { topOperator = "";};
+                    topOperator = getTopOperator(stack);
                 }
                 stack.push(currToken); //store current token in operator stack
             } else if (currToken.equals("(")) {
@@ -111,14 +109,13 @@ class Calculator {
                 while (!topOperator.equals("(")) {
                     //TODO kan läggas i egen metod för att snygga till koden lite
                     output.push(stack.pop());
-                    if (!stack.empty()) {topOperator = stack.peek();}
-                    else { topOperator = "";};
+                    topOperator = getTopOperator(stack);
                 }
                 if (topOperator.equals("(")) {
                     stack.pop();
                 }
             }
-            tokens.remove(i); //remove currentToken
+            tokens.remove(0); //remove currentToken
         }
         while (stack.size() > 0) {
             output.push(stack.pop());
@@ -141,10 +138,10 @@ class Calculator {
     }
 
     Assoc getAssociativity(String op) {
-        if (OPERATORS.contains(op)) {
-            return Assoc.LEFT;
-        } else if ("^".contains(op)) {
+        if ("^".contains(op)) {
             return Assoc.RIGHT;
+        } else if (OPERATORS.contains(op)) {
+            return Assoc.LEFT;
         } else {
             throw new RuntimeException(OP_NOT_FOUND);
         }
@@ -190,4 +187,10 @@ class Calculator {
     public boolean isNumber(char numb) {
         return Character.isDigit(numb);
     }
+
+    public String getTopOperator(Stack<String> stack) {
+        if (!stack.empty()) {return stack.peek();}
+        else { return "";}
+    }
+
 }
