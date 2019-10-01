@@ -46,19 +46,24 @@ class Calculator {
 
     public double evalPostfix(List<String> postfix) {
         Stack<String> result = new Stack<>();
-        int i = 0;
         while (postfix.size() > 0) {
-            String currToken = postfix.get(i);
+            double d1, d2;
+            String currToken = postfix.get(0);
             if (isNumber(currToken)) {
                 result.push(currToken);
             }
             if (OPERATORS.contains(currToken)) {
-                double sum = applyOperator(currToken, Double.parseDouble(result.pop()), Double.parseDouble(result.pop()));
+                try {
+                    d1 = Double.parseDouble(result.pop());
+                    d2 = Double.parseDouble(result.pop());
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(MISSING_OPERAND);
+                }
+                double sum = applyOperator(currToken, d1, d2);
                 result.push(Double.toString(sum));
             }
             postfix.remove(currToken);
         }
-
         return Double.parseDouble(result.pop());
     }
 
@@ -108,8 +113,13 @@ class Calculator {
             } else if (currToken.equals(")")) { // if currToken is right paranthesis output all operators until left paranthesis
                 while (!topOperator.equals("(")) {
                     //TODO kan läggas i egen metod för att snygga till koden lite
-                    output.push(stack.pop());
-                    topOperator = getTopOperator(stack);
+                    try {
+                        output.push(stack.pop());
+                        topOperator = getTopOperator(stack);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException(MISSING_OPERATOR);
+                    }
+
                 }
                 if (topOperator.equals("(")) {
                     stack.pop();

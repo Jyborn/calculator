@@ -118,11 +118,11 @@ class Test {
             out.println(e.getMessage().equals(Calculator.MISSING_OPERATOR));
         }
         // Optional, try to fix this
-        /*try {
+        try {
             e("(1 + 2", 0);
         } catch (IllegalArgumentException e) {
             out.println(e.getMessage().equals(Calculator.MISSING_OPERATOR));
-        }*/
+        }
 
     }
 
